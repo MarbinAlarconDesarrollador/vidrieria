@@ -1,0 +1,103 @@
+:root {
+    --accent: #00d4ff;
+    --dark-bg: #0f172a;
+    --glass: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+* { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+body { margin: 0; background-color: var(--dark-bg); color: #f1f1f1; overflow-x: hidden; }
+
+/* HERO */
+#hero {
+    height: 100vh;
+    background: url('img/banner.png') center/cover no-repeat;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+}
+.hero-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, rgba(15,23,42,0.4) 0%, rgba(15,23,42,0.9) 100%);
+}
+.hero-content { position: relative; text-align: center; z-index: 5; padding: 20px; }
+.hero-content h1 { 
+    font-size: 4rem; font-weight: 800; text-transform: uppercase; 
+    background: linear-gradient(to right, #fff, var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+/* NAV */
+.glass-nav {
+    position: sticky; top: 0; z-index: 1000;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px 5%; background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(15px); border-bottom: 1px solid var(--glass-border);
+}
+.nav-logo span { color: var(--accent); font-weight: 800; }
+.nav-links button { background: none; border: none; color: white; cursor: pointer; margin-left: 15px; }
+
+/* SECCIONES PRO */
+.pro-section { padding: 60px 5%; max-width: 1200px; margin: 0 auto; min-height: 80vh; }
+.section-title { margin-bottom: 40px; position: relative; }
+.section-title span { font-size: 5rem; font-weight: 900; opacity: 0.05; position: absolute; top: -30px; }
+.section-title h2 { position: relative; z-index: 1; font-size: 2rem; border-left: 4px solid var(--accent); padding-left: 15px; }
+
+/* SIMULADOR */
+.ar-container {
+    position: relative; width: 100%; max-width: 600px; height: 60vh;
+    margin: 20px auto; background: #000; border-radius: 20px; overflow: hidden;
+}
+#camera-feed { width: 100%; height: 100%; object-fit: cover; }
+#product-overlay {
+    position: absolute; top: 50%; left: 50%; width: 200px;
+    transform: translate(-50%, -50%); z-index: 10; touch-action: none;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+}
+.product-carousel {
+    display: flex; overflow-x: auto; gap: 15px; padding: 15px;
+    background: var(--glass); border-radius: 15px; border: 1px solid var(--glass-border);
+}
+.product-item img { width: 80px; height: 80px; object-fit: contain; border-radius: 10px; cursor: pointer; background: white; }
+
+/* ACORDEÓN */
+.accordion-container { display: flex; gap: 10px; height: 400px; }
+.accordion-item { flex: 1; position: relative; overflow: hidden; border-radius: 20px; transition: all 0.6s ease; }
+.accordion-item.active { flex: 5; }
+.accordion-item img { width: 100%; height: 100%; object-fit: cover; }
+
+/* BOTÓN WHATSAPP */
+.btn-whatsapp-pro {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+    color: white; padding: 18px 30px; border-radius: 50px; text-decoration: none;
+    font-weight: bold; animation: pulse-green 2s infinite;
+}
+@keyframes pulse-green {
+    0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+
+/* CONTACTO */
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+.info-card { background: var(--glass); padding: 30px; border-radius: 20px; border: 1px solid var(--glass-border); }
+@media (max-width: 768px) { .contact-grid, .accordion-container { flex-direction: column; grid-template-columns: 1fr; } }
+
+#btn-3d {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000 !important; /* Valor muy alto */
+    background: rgba(255, 255, 255, 0.95);
+    color: #000;
+    padding: 12px 24px;
+    border-radius: 50px;
+    border: 2px solid var(--accent);
+    display: none; /* JS lo activará */
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    cursor: pointer;
+}

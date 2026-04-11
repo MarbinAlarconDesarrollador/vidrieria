@@ -1,0 +1,22 @@
+{
+  "short_name": "VidriosApp",
+  "name": "VidriosApp - Diseño y Realidad Aumentada",
+  "icons": [
+    {
+      "src": "img/icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "img/icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "index.html",
+  "background_color": "#0f172a",
+  "display": "standalone",
+  "scope": "./",
+  "theme_color": "#00d4ff",
+  "description": "Simulador AR de vidrios y espejos para tu hogar."
+}
