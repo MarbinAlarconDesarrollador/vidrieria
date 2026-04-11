@@ -50,7 +50,7 @@
             <div id="product-list" class="product-carousel"></div>
 
             <div class="ar-container">
-                <video id="camera-feed" autoplay playsinline></video>
+                <video id="camera-feed" autoplay playsinline muted></video>
                 <img id="product-overlay" src="" alt="Producto" style="opacity: 0;">
 
                 <button id="btn-3d" onclick="rotateProductView()"
@@ -67,10 +67,56 @@
             </div>
             <div class="accordion-container" id="accordion-galeria"></div>
         </section>
-
-        <section id="contacto" class="pro-section" style="display: none;">
+        <section id="servicios" class="pro-section">
             <div class="section-title">
                 <span>03</span>
+                <h2>Nuestras Especialidades</h2>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">💎</div>
+                    <h3>Vidrio Templado</h3>
+                    <p>Seguridad y elegancia para fachadas, puertas y divisiones de alto impacto.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">💡</div>
+                    <h3>Espejos Inteligentes</h3>
+                    <p>Espejos con retroiluminación LED, sensores táctiles y sistemas desempañantes.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🏗️</div>
+                    <h3>Divisiones de Baño</h3>
+                    <p>Diseños a medida en acero inoxidable y herrajes de lujo para tu hogar.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="proceso" class="pro-section" style="background: rgba(255,255,255,0.02)">
+            <div class="section-title">
+                <span>04</span>
+                <h2>Tu Proyecto en 3 Pasos</h2>
+            </div>
+            <div class="process-steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <h4>Medición</h4>
+                    <p>Visitamos tu espacio para tomar medidas milimétricas sin costo extra.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <h4>Simulación</h4>
+                    <p>Usas nuestra App para visualizar el diseño final en tu propia pared.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <h4>Instalación</h4>
+                    <p>En menos de 5 días hábiles, nuestro equipo experto realiza el montaje.</p>
+                </div>
+            </div>
+        </section>
+        <section id="contacto" class="pro-section" style="display: none;">
+            <div class="section-title">
+                <span>05</span>
                 <h2>Visítanos</h2>
             </div>
 
@@ -94,6 +140,7 @@
                 </div>
             </div>
         </section>
+
     </main>
 
     <script src="app.js"></script>
