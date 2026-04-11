@@ -85,13 +85,46 @@ function rotateProductView() {
     }, 150);
 }
 // --- 4. CÁMARA ---
-async function startCamera() {
+/*async function startCamera() {
     const video = document.getElementById('camera-feed');
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
         video.srcObject = stream;
     } catch (err) {
         console.error("Cámara no disponible");
+    }
+}*/
+
+
+async function startCamera() {
+    const videoElement = document.getElementById('camera-feed');
+    
+    // Configuración avanzada para móviles
+    const constraints = {
+        video: {
+            facingMode: 'environment', // Fuerza la cámara trasera
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+        },
+        audio: false // No necesitamos micrófono
+    };
+    
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        videoElement.srcObject = stream;
+        
+        // Atributos necesarios para que iPhone/iOS no bloquee el video
+        videoElement.setAttribute('playsinline', true);
+        videoElement.play(); 
+        
+        console.log("Cámara iniciada correctamente");
+    } catch (err) {
+        console.error("Error detallado:", err);
+        if (err.name === 'NotAllowedError') {
+            alert("⚠️ Bloqueaste la cámara. Por favor, ve a la configuración del sitio y permite el acceso.");
+        } else {
+            alert("No se pudo acceder a la cámara. Asegúrate de estar usando HTTPS.");
+        }
     }
 }
 
