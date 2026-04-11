@@ -20,57 +20,38 @@ const overlay = document.getElementById('product-overlay');
 
 // --- 2. NAVEGACIÓN ---
 function showSection(sectionId) {
-    // 1. Lista de todas las secciones
     const sections = ['simulador', 'galeria', 'contacto'];
     
-    // 2. Ocultamos todas las secciones
+    // Ocultar todo
     sections.forEach(id => {
         const sec = document.getElementById(id);
         if(sec) sec.style.display = 'none';
     });
-    
-    // 3. Mostramos la sección activa
-    const activeSec = document.getElementById(sectionId);
-    if(activeSec) {
-        activeSec.style.display = 'block';
-    }
 
-    // 4. Lógica específica por sección
+    // Mostrar sección activa
+    const activeSec = document.getElementById(sectionId);
+    if(activeSec) activeSec.style.display = 'block';
+
+    // Lógica por sección
     if (sectionId === 'galeria') {
         cargarGaleria();
     } 
     
     if (sectionId === 'simulador') {
-        // Cargamos una categoría por defecto
         filterProducts('espejo-luz');
-        
-        // Ejecutamos la cámara tras un pequeño delay para asegurar 
-        // que el contenedor ya es visible en el DOM (Crucial para móviles)
+        // El delay de 300ms es CLAVE para que el navegador vea el elemento visible antes de pedir cámara
         setTimeout(() => {
             startCamera();
         }, 300);
     } else {
-        // OPCIONAL: Detener la cámara si salimos del simulador 
-        // para ahorrar batería y privacidad del usuario
-        stopCamera(); 
+        stopCamera();
     }
-    
-    // 5. Scroll suave a la navegación para que el usuario no se pierda
+
+    // Scroll al menú
     const nav = document.querySelector('.glass-nav');
-    if(nav) {
-        window.scrollTo({ top: nav.offsetTop, behavior: 'smooth' });
-    }
+    if(nav) window.scrollTo({ top: nav.offsetTop, behavior: 'smooth' });
 }
 
-// Función auxiliar para detener la cámara (Añádela a tu app.js)
-function stopCamera() {
-    const video = document.getElementById('camera-feed');
-    if (video && video.srcObject) {
-        const tracks = video.srcObject.getTracks();
-        tracks.forEach(track => track.stop());
-        video.srcObject = null;
-    }
-}
 // --- 3. LÓGICA DEL SIMULADOR ---
 function filterProducts(category) {
     const container = document.getElementById('product-list');
@@ -133,11 +114,12 @@ function rotateProductView() {
 
 async function startCamera() {
     const video = document.getElementById('camera-feed');
-    
-    // Configuración específica para cámaras traseras de móviles
+    if (!video) return;
+
+    // Intentamos primero la cámara trasera con alta resolución
     const constraints = {
         video: {
-            facingMode: { exact: "environment" }, // Fuerza la cámara trasera
+            facingMode: { ideal: "environment" },
             width: { ideal: 1280 },
             height: { ideal: 720 }
         },
@@ -148,29 +130,26 @@ async function startCamera() {
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = stream;
         
-        // Atributos CRÍTICOS para iPhone/Safari
-        video.setAttribute('playsinline', true); 
+        // Atributos vitales para que iOS/Android no bloqueen el video
+        video.setAttribute('playsinline', true);
         video.setAttribute('muted', true);
-        video.play();
         
-        console.log("Cámara iniciada");
+        // Forzamos el play
+        await video.play();
+        console.log("Cámara activa");
     } catch (err) {
-        console.warn("Error con cámara trasera exacta, intentando cámara genérica:", err);
-        
-        // Segundo intento: Si el móvil no reconoce "exact", intentamos modo simple
-        try {
-            const fallbackStream = await navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: "environment" } 
-            });
-            video.srcObject = fallbackStream;
-            video.setAttribute('playsinline', true);
-            video.play();
-        } catch (secondErr) {
-            alert("Error: No se pudo acceder a la cámara. Asegúrate de dar permisos en los ajustes del navegador.");
-        }
+        console.error("Error cámara:", err);
+        alert("Asegúrate de dar permiso a la cámara en el navegador.");
     }
 }
 
+function stopCamera() {
+    const video = document.getElementById('camera-feed');
+    if (video && video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
+        video.srcObject = null;
+    }
+}
 // --- 5. INTERACCIÓN TÁCTIL (ARRASTRE Y ESCALA) ---
 let currentX = 0, currentY = 0, currentScale = 1;
 let startX, startY, initialDistance = 0;
