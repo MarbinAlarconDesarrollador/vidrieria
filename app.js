@@ -20,22 +20,57 @@ const overlay = document.getElementById('product-overlay');
 
 // --- 2. NAVEGACIÓN ---
 function showSection(sectionId) {
+    // 1. Lista de todas las secciones
     const sections = ['simulador', 'galeria', 'contacto'];
-    sections.forEach(id => document.getElementById(id).style.display = 'none');
     
+    // 2. Ocultamos todas las secciones
+    sections.forEach(id => {
+        const sec = document.getElementById(id);
+        if(sec) sec.style.display = 'none';
+    });
+    
+    // 3. Mostramos la sección activa
     const activeSec = document.getElementById(sectionId);
-    activeSec.style.display = 'block';
+    if(activeSec) {
+        activeSec.style.display = 'block';
+    }
 
-    if(sectionId === 'galeria') cargarGaleria();
-    if(sectionId === 'simulador') {
-        startCamera();
+    // 4. Lógica específica por sección
+    if (sectionId === 'galeria') {
+        cargarGaleria();
+    } 
+    
+    if (sectionId === 'simulador') {
+        // Cargamos una categoría por defecto
         filterProducts('espejo-luz');
+        
+        // Ejecutamos la cámara tras un pequeño delay para asegurar 
+        // que el contenedor ya es visible en el DOM (Crucial para móviles)
+        setTimeout(() => {
+            startCamera();
+        }, 300);
+    } else {
+        // OPCIONAL: Detener la cámara si salimos del simulador 
+        // para ahorrar batería y privacidad del usuario
+        stopCamera(); 
     }
     
-    // Scroll suave a la sección
-    window.scrollTo({ top: document.querySelector('.glass-nav').offsetTop, behavior: 'smooth' });
+    // 5. Scroll suave a la navegación para que el usuario no se pierda
+    const nav = document.querySelector('.glass-nav');
+    if(nav) {
+        window.scrollTo({ top: nav.offsetTop, behavior: 'smooth' });
+    }
 }
 
+// Función auxiliar para detener la cámara (Añádela a tu app.js)
+function stopCamera() {
+    const video = document.getElementById('camera-feed');
+    if (video && video.srcObject) {
+        const tracks = video.srcObject.getTracks();
+        tracks.forEach(track => track.stop());
+        video.srcObject = null;
+    }
+}
 // --- 3. LÓGICA DEL SIMULADOR ---
 function filterProducts(category) {
     const container = document.getElementById('product-list');
@@ -97,33 +132,41 @@ function rotateProductView() {
 
 
 async function startCamera() {
-    const videoElement = document.getElementById('camera-feed');
+    const video = document.getElementById('camera-feed');
     
-    // Configuración avanzada para móviles
+    // Configuración específica para cámaras traseras de móviles
     const constraints = {
         video: {
-            facingMode: 'environment', // Fuerza la cámara trasera
+            facingMode: { exact: "environment" }, // Fuerza la cámara trasera
             width: { ideal: 1280 },
             height: { ideal: 720 }
         },
-        audio: false // No necesitamos micrófono
+        audio: false
     };
-    
+
     try {
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        videoElement.srcObject = stream;
+        video.srcObject = stream;
         
-        // Atributos necesarios para que iPhone/iOS no bloquee el video
-        videoElement.setAttribute('playsinline', true);
-        videoElement.play(); 
+        // Atributos CRÍTICOS para iPhone/Safari
+        video.setAttribute('playsinline', true); 
+        video.setAttribute('muted', true);
+        video.play();
         
-        console.log("Cámara iniciada correctamente");
+        console.log("Cámara iniciada");
     } catch (err) {
-        console.error("Error detallado:", err);
-        if (err.name === 'NotAllowedError') {
-            alert("⚠️ Bloqueaste la cámara. Por favor, ve a la configuración del sitio y permite el acceso.");
-        } else {
-            alert("No se pudo acceder a la cámara. Asegúrate de estar usando HTTPS.");
+        console.warn("Error con cámara trasera exacta, intentando cámara genérica:", err);
+        
+        // Segundo intento: Si el móvil no reconoce "exact", intentamos modo simple
+        try {
+            const fallbackStream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: "environment" } 
+            });
+            video.srcObject = fallbackStream;
+            video.setAttribute('playsinline', true);
+            video.play();
+        } catch (secondErr) {
+            alert("Error: No se pudo acceder a la cámara. Asegúrate de dar permisos en los ajustes del navegador.");
         }
     }
 }
