@@ -418,51 +418,27 @@ function exportToCSV() {
     document.body.removeChild(link);
 }
 
-// --- FUNCIONES DEL MENÚ MÓVIL ---
 function toggleMenu() {
     const menu = document.getElementById('nav-menu');
     const toggle = document.getElementById('mobile-menu');
-    const body = document.body;
-
-    const isOpen = menu.classList.toggle('active');
+    
+    // Alternamos la clase 'active'
+    menu.classList.toggle('active');
+    
+    // Animación opcional de la X en la hamburguesa
     toggle.classList.toggle('is-active');
-
-    // 🔒 Bloquear scroll cuando el menú está abierto
-    body.style.overflow = isOpen ? 'hidden' : '';
 }
 
-document.addEventListener('click', function (e) {
-    const menu = document.getElementById('nav-menu');
-    const toggle = document.getElementById('mobile-menu');
-
-    if (!menu.contains(e.target) && !toggle.contains(e.target)) {
-        if (menu.classList.contains('active')) {
-            toggleMenu();
-        }
-    }
-});
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        const menu = document.getElementById('nav-menu');
-        if (menu.classList.contains('active')) {
-            toggleMenu();
-        }
-    }
-});
-
-
-
 function navAction(section) {
-    showSection(section); // Cambia la sección
+    // 1. Ejecutamos el cambio de sección
+    showSection(section); 
     
-    // Si el menú está abierto (clase active), lo cerramos
+    // 2. Cerramos el menú si estamos en móvil
     const menu = document.getElementById('nav-menu');
     if (menu.classList.contains('active')) {
         toggleMenu();
     }
 }
-
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
