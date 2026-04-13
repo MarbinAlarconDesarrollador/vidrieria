@@ -422,23 +422,46 @@ function exportToCSV() {
 function toggleMenu() {
     const menu = document.getElementById('nav-menu');
     const toggle = document.getElementById('mobile-menu');
-    
-    menu.classList.toggle('active');
+    const body = document.body;
+
+    const isOpen = menu.classList.toggle('active');
     toggle.classList.toggle('is-active');
+
+    // 🔒 Bloquear scroll cuando el menú está abierto
+    body.style.overflow = isOpen ? 'hidden' : '';
 }
 
-// Nueva función para navegar y cerrar el menú
-function navAction(section) {
-    showSection(section); // Tu función existente
-    
-    // Si el menú está abierto en móvil, cerrarlo
+document.addEventListener('click', function (e) {
     const menu = document.getElementById('nav-menu');
     const toggle = document.getElementById('mobile-menu');
+
+    if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+        if (menu.classList.contains('active')) {
+            toggleMenu();
+        }
+    }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const menu = document.getElementById('nav-menu');
+        if (menu.classList.contains('active')) {
+            toggleMenu();
+        }
+    }
+});
+
+
+
+function navAction(section) {
+    showSection(section); // Cambia la sección
+    
+    // Si el menú está abierto (clase active), lo cerramos
+    const menu = document.getElementById('nav-menu');
     if (menu.classList.contains('active')) {
         toggleMenu();
     }
 }
-
 
 
 if ('serviceWorker' in navigator) {
