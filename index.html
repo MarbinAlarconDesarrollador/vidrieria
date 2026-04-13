@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VidriosApp - Premium Glass Design</title>
+    <title>VidriosApp - Vidrieria Keyner Figueroa</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -25,15 +25,22 @@
     </header>
 
     <nav class="glass-nav">
-        <div class="nav-logo">Vidrios<span>App</span></div>
-        <div class="nav-links">
-            <button onclick="showSection('simulador')">Simulador</button>
-            <button onclick="showSection('galeria')">Galería</button>
-            <button onclick="showSection('contacto')">Ubicación</button>
-            <button onclick="showSection('admin')">Gestión</button>
-        </div>
-        </div>
-    </nav>
+    <div class="nav-logo" onclick="location.reload()">Vidrieria<span>Keiner Figueroa</span></div>
+    
+    <div class="menu-toggle" id="mobile-menu" onclick="toggleMenu()">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+        
+    </div>
+
+    <div class="nav-links" id="nav-menu">
+        <button onclick="navAction('simulador')">Simulador</button>
+        <button onclick="navAction('galeria')">Galería</button>
+        <button onclick="navAction('contacto')">Ubicación</button>
+        <button onclick="navAction('admin')" class="btn-admin-nav">Gestión</button>
+    </div>
+</nav>
 
     <main>
         <section id="simulador" class="pro-section" style="display: none;">
@@ -210,7 +217,7 @@
     <footer class="main-footer">
         <div class="footer-content">
             <div class="footer-brand">
-                <div class="nav-logo">Vidrios<span>App</span></div>
+                <div class="nav-logo">Vidrieria<span>Keiner Figueroa</span></div>
                 <p>Innovación en vidrio y espejos para Piedecuesta y todo Santander.</p>
             </div>
 
@@ -233,7 +240,7 @@
         </div>
 
         <div class="footer-bottom">
-            <p>&copy; 2026 Vidriería G. Todos los derechos reservados.</p>
+            <p>&copy; 2026 Vidriería Keyner Figueroa. Todos los derechos reservados.</p>
             <p class="dev-credit">Desarrollado con ❤️ por <span>Marbin Alarcón</span></p>
         </div>
     </footer>

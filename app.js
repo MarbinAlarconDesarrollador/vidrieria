@@ -418,6 +418,27 @@ function exportToCSV() {
     document.body.removeChild(link);
 }
 
+// --- FUNCIONES DEL MENÚ MÓVIL ---
+function toggleMenu() {
+    const menu = document.getElementById('nav-menu');
+    const toggle = document.getElementById('mobile-menu');
+    
+    menu.classList.toggle('active');
+    toggle.classList.toggle('is-active');
+}
+
+// Nueva función para navegar y cerrar el menú
+function navAction(section) {
+    showSection(section); // Tu función existente
+    
+    // Si el menú está abierto en móvil, cerrarlo
+    const menu = document.getElementById('nav-menu');
+    const toggle = document.getElementById('mobile-menu');
+    if (menu.classList.contains('active')) {
+        toggleMenu();
+    }
+}
+
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js')
