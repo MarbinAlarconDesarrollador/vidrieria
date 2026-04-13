@@ -30,6 +30,8 @@
             <button onclick="showSection('simulador')">Simulador</button>
             <button onclick="showSection('galeria')">Galería</button>
             <button onclick="showSection('contacto')">Ubicación</button>
+            <button onclick="showSection('admin')">Gestión</button>
+        </div>
         </div>
     </nav>
 
@@ -140,7 +142,70 @@
                 </div>
             </div>
         </section>
+        <section id="admin" class="pro-section" style="display: none;">
+            <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center;">
+                    <span>06</span>
+                    <h2>Panel Administrativo</h2>
+                </div>
+                <button onclick="exportToCSV()" class="btn-logout"
+                    style="background: rgba(37, 211, 102, 0.1); color: #25d366; border-color: rgba(37, 211, 102, 0.3);">
+                    📥 Exportar Excel
+                </button>
+                <button onclick="logoutAdmin()" class="btn-logout">Cerrar Sesión</button>
+            </div>
 
+            <p style="color: #94a3b8; margin-bottom: 20px;">Control local de ventas y gastos.</p>
+
+            <div class="admin-filters">
+                <button class="filter-btn active" onclick="applyFilter('all', this)">Histórico</button>
+                <button class="filter-btn" onclick="applyFilter('daily', this)">Hoy</button>
+                <button class="filter-btn" onclick="applyFilter('weekly', this)">Últimos 7 días</button>
+                <button class="filter-btn" onclick="applyFilter('monthly', this)">Este Mes</button>
+            </div>
+            <div class="admin-dashboard">
+                <div class="admin-dashboard">
+                    <div class="card income">
+                        <h4>Ingresos</h4>
+                        <p>$<span id="total-income">0</span></p>
+                    </div>
+                    <div class="card expense">
+                        <h4>Gastos</h4>
+                        <p>$<span id="total-expense">0</span></p>
+                    </div>
+                    <div class="card balance">
+                        <h4>Balance Neto</h4>
+                        <p>$<span id="total-balance">0</span></p>
+                    </div>
+                </div>
+
+                <form id="admin-form" onsubmit="addTransaction(event)">
+                    <input type="text" id="t-desc" placeholder="Ej. Anticipo Espejo Aura" required>
+                    <input type="number" id="t-amount" placeholder="Monto ($)" required>
+                    <select id="t-type">
+                        <option value="ingreso">Venta / Ingreso</option>
+                        <option value="gasto">Costo / Gasto</option>
+                    </select>
+                    <button type="submit" class="btn-primary"
+                        style="padding: 12px 25px; border-radius: 8px;">Agregar</button>
+                </form>
+
+                <div class="table-responsive">
+                    <table id="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Descripción</th>
+                                <th>Tipo</th>
+                                <th>Monto</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="t-body">
+                        </tbody>
+                    </table>
+                </div>
+        </section>
     </main>
     <footer class="main-footer">
         <div class="footer-content">
@@ -172,6 +237,20 @@
             <p class="dev-credit">Desarrollado con ❤️ por <span>Marbin Alarcón</span></p>
         </div>
     </footer>
+
+    <div id="admin-login" class="glass-nav"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:10001; flex-direction:column; justify-content:center; align-items:center; background: rgba(15, 23, 42, 0.98);">
+        <div class="service-card" style="max-width: 400px; width: 90%;">
+            <h3>Acceso Restringido</h3>
+            <p style="margin-bottom:20px; color:#94a3b8;">Ingrese su clave maestra</p>
+            <input type="password" id="admin-pass" placeholder="Contraseña"
+                style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,0.3); color:white; text-align:center;">
+            <div style="display:flex; gap:10px;">
+                <button onclick="cancelLogin()" class="btn-secondary" style="flex:1;">Cancelar</button>
+                <button onclick="checkAdminPassword()" class="btn-primary" style="flex:1;">Entrar</button>
+            </div>
+        </div>
+    </div>
 
     <script src="app.js"></script>
 </body>

@@ -19,37 +19,46 @@ let activeProduct = null;
 const overlay = document.getElementById('product-overlay');
 
 // --- 2. NAVEGACIÓN ---
-function showSection(sectionId) {
-    const sections = ['simulador', 'galeria', 'contacto'];
-    
+function executeShowSection(sectionId) {
+    const sections = ['simulador', 'galeria', 'contacto', 'admin'];
+    // Secciones adicionales que queremos ocultar en el modo Admin
+    const servicios = document.getElementById('servicios');
+    const proceso = document.getElementById('proceso');
     // Ocultar todo
     sections.forEach(id => {
         const sec = document.getElementById(id);
-        if(sec) sec.style.display = 'none';
+        if (sec) sec.style.display = 'none';
     });
 
     // Mostrar sección activa
     const activeSec = document.getElementById(sectionId);
-    if(activeSec) activeSec.style.display = 'block';
+    if (activeSec) activeSec.style.display = 'block';
 
     // Lógica por sección
     if (sectionId === 'galeria') {
         cargarGaleria();
-    } 
-    
-    if (sectionId === 'simulador') {
+    }
+    else if (sectionId === 'simulador') {
         filterProducts('espejo-luz');
         // El delay de 300ms es CLAVE para que el navegador vea el elemento visible antes de pedir cámara
         setTimeout(() => {
             startCamera();
         }, 300);
-    } else {
+    } else if (sectionId === 'admin') {
+        if (servicios) servicios.style.display = 'none';
+        if (proceso) proceso.style.display = 'none';
+        // Aquí podrías cargar datos de productos, estadísticas, etc.
+        //console.log("Sección Admin - Aquí va la lógica administrativa");
+        updateAdminUI(); // <-- Nueva llamada para pintar los datos
+        stopCamera();
+    }
+    else {
         stopCamera();
     }
 
     // Scroll al menú
     const nav = document.querySelector('.glass-nav');
-    if(nav) window.scrollTo({ top: nav.offsetTop, behavior: 'smooth' });
+    if (nav) window.scrollTo({ top: nav.offsetTop, behavior: 'smooth' });
 }
 
 // --- 3. LÓGICA DEL SIMULADOR ---
@@ -74,7 +83,7 @@ function changeProduct(category, productId) {
 
     activeProduct.currentViewIndex = 0;
     const overlay = document.getElementById('product-overlay');
-    
+
     // Ruta corregida para evitar errores de net::ERR_FILE_NOT_FOUND
     overlay.src = `img/catalog/${activeProduct.views[0]}`;
     overlay.style.opacity = 1;
@@ -93,7 +102,7 @@ function rotateProductView() {
 
     activeProduct.currentViewIndex = (activeProduct.currentViewIndex + 1) % activeProduct.views.length;
     const overlay = document.getElementById('product-overlay');
-    
+
     overlay.style.opacity = 0;
     setTimeout(() => {
         overlay.src = `img/catalog/${activeProduct.views[activeProduct.currentViewIndex]}`;
@@ -129,11 +138,11 @@ async function startCamera() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = stream;
-        
+
         // Atributos vitales para que iOS/Android no bloqueen el video
         video.setAttribute('playsinline', true);
         video.setAttribute('muted', true);
-        
+
         // Forzamos el play
         await video.play();
         console.log("Cámara activa");
@@ -199,6 +208,216 @@ function cargarGaleria() {
     });
 }
 
+// --- 7. LÓGICA ADMINISTRATIVA (LOCALSTORAGE) ---
+
+// Cargar transacciones existentes o iniciar vacío
+let transactions = JSON.parse(localStorage.getItem('vidrios_transactions')) || [];
+let currentFilter = 'all'; // Inicia mostrando todo el histórico
+
+function addTransaction(e) {
+    e.preventDefault(); // Evita que la página recargue
+
+    const desc = document.getElementById('t-desc').value;
+    const amount = parseFloat(document.getElementById('t-amount').value);
+    const type = document.getElementById('t-type').value;
+
+    // Obtener fecha actual en formato legible
+    const dateObj = new Date();
+    const date = `${dateObj.getDate()}/${dateObj.getMonth() + 1}/${dateObj.getFullYear()}`;
+
+    // Crear el objeto de transacción
+    const newTransaction = {
+        id: Date.now(), // ID único basado en el timestamp
+        desc,
+        amount,
+        type,
+        date
+    };
+
+    // Guardar y actualizar
+    transactions.push(newTransaction);
+    localStorage.setItem('vidrios_transactions', JSON.stringify(transactions));
+
+    e.target.reset(); // Limpiar el formulario
+    updateAdminUI(); // Refrescar la tabla
+}
+
+function deleteTransaction(id) {
+    const confirmPass = prompt("🔑 AUTORIZACIÓN REQUERIDA\nIngrese la clave para ELIMINAR este registro:");
+
+    if (confirmPass === ADMIN_DELETE_KEY) {
+        transactions = transactions.filter(t => t.id !== id);
+        localStorage.setItem('vidrios_transactions', JSON.stringify(transactions));
+        updateAdminUI();
+        // Notificación discreta
+        console.log("Registro eliminado");
+    } else if (confirmPass !== null) {
+        alert("❌ Clave incorrecta. Acción cancelada.");
+    }
+}
+
+function updateAdminUI() {
+    const tbody = document.getElementById('t-body');
+    tbody.innerHTML = '';
+
+    let totalIncome = 0;
+    let totalExpense = 0;
+
+    // Constantes de tiempo para los filtros
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const sevenDaysAgo = now.getTime() - (7 * 24 * 60 * 60 * 1000);
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    // 1. FILTRAR los datos según el botón seleccionado
+    const filteredTransactions = transactions.filter(t => {
+        const tDate = new Date(t.id); // Convertimos el ID (timestamp) a Fecha
+        
+        if (currentFilter === 'daily') {
+            return t.id >= todayStart; // Desde las 00:00 de hoy
+        } else if (currentFilter === 'weekly') {
+            return t.id >= sevenDaysAgo; // Últimos 7 días exactos
+        } else if (currentFilter === 'monthly') {
+            // Coincide el mes y el año actual
+            return tDate.getMonth() === currentMonth && tDate.getFullYear() === currentYear;
+        }
+        return true; // 'all' - Histórico completo
+    });
+
+    // 2. ORDENAR de más reciente a más antiguo
+    const sortedTransactions = filteredTransactions.sort((a, b) => b.id - a.id);
+
+    // 3. PINTAR en la tabla y sumar
+    sortedTransactions.forEach(t => {
+        if (t.type === 'ingreso') {
+            totalIncome += t.amount;
+        } else {
+            totalExpense += t.amount;
+        }
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${t.date}</td>
+            <td>${t.desc}</td>
+            <td><span class="badge ${t.type}">${t.type === 'ingreso' ? 'Ingreso' : 'Gasto'}</span></td>
+            <td>$${t.amount.toLocaleString('es-CO')}</td>
+            <td><button class="btn-delete" onclick="deleteTransaction(${t.id})">Borrar</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    // 4. ACTUALIZAR las tarjetas del Dashboard
+    document.getElementById('total-income').innerText = totalIncome.toLocaleString('es-CO');
+    document.getElementById('total-expense').innerText = totalExpense.toLocaleString('es-CO');
+    document.getElementById('total-balance').innerText = (totalIncome - totalExpense).toLocaleString('es-CO');
+}
+
+function applyFilter(filterType, btnElement) {
+    currentFilter = filterType;
+    
+    // Actualizar visualmente el botón activo
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    if (btnElement) {
+        btnElement.classList.add('active');
+    }
+    
+    // Refrescar la tabla y los números
+    updateAdminUI();
+}
+
+
+// --- 8. SEGURIDAD ADMIN (LOCAL) ---
+const ADMIN_KEY = "1234"; // Define aquí tu contraseña maestra
+const ADMIN_DELETE_KEY = "0000"; // Clave para borrar registros (puedes usar la misma si prefieres)
+
+let isAdminAuthenticated = false;
+
+// Añade esto después de definir isAdminAuthenticated
+document.addEventListener('DOMContentLoaded', () => {
+    const passInput = document.getElementById('admin-pass');
+    if (passInput) {
+        passInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkAdminPassword();
+            }
+        });
+    }
+});
+
+function checkAdminPassword() {
+    const passInput = document.getElementById('admin-pass');
+    if (passInput.value === ADMIN_KEY) {
+        isAdminAuthenticated = true;
+        document.getElementById('admin-login').style.display = 'none';
+        executeShowSection('admin'); // Procede a mostrar la sección
+    } else {
+        alert("Contraseña incorrecta");
+    }
+    passInput.value = "";
+}
+
+function cancelLogin() {
+    document.getElementById('admin-login').style.display = 'none';
+    showSection('simulador'); // Redirigir si cancela
+}
+
+// Modificamos showSection para que actúe como guardián
+function showSection(sectionId) {
+    if (sectionId === 'admin' && !isAdminAuthenticated) {
+        document.getElementById('admin-login').style.display = 'flex';
+        return; // Detiene la navegación hasta que se autentique
+    }
+    executeShowSection(sectionId);
+}
+
+function logoutAdmin() {
+    // 1. Resetear el estado de autenticación
+    isAdminAuthenticated = false;
+    
+    // 2. Limpiar el campo de contraseña del modal por seguridad
+    document.getElementById('admin-pass').value = "";
+    
+    // 3. Redirigir a la sección principal (Simulador)
+    showSection('simulador');
+    
+    // 4. Opcional: Feedback visual
+    console.log("Sesión administrativa cerrada");
+}
+
+// --- 9. EXPORTAR DATOS A CSV (EXCEL) ---
+function exportToCSV() {
+    if (transactions.length === 0) {
+        alert("No hay datos para exportar.");
+        return;
+    }
+
+    // Definir encabezados
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "Fecha,Descripcion,Tipo,Monto\n";
+
+    // Recorrer transacciones y dar formato
+    transactions.forEach(t => {
+        // Limpiamos la descripción de comas para no romper el CSV
+        const cleanDesc = t.desc.replace(/,/g, "."); 
+        const row = `${t.date},${cleanDesc},${t.type.toUpperCase()},${t.amount}`;
+        csvContent += row + "\n";
+    });
+
+    // Crear el enlace de descarga
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    
+    // Nombre del archivo con fecha actual
+    const fechaDescarga = new Date().toLocaleDateString().replace(/\//g, "-");
+    link.setAttribute("download", `Reporte_VidriosApp_${fechaDescarga}.csv`);
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js')
@@ -206,3 +425,4 @@ if ('serviceWorker' in navigator) {
             .catch(err => console.warn('Error al registrar el Service Worker', err));
     });
 }
+
