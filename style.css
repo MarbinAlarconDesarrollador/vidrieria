@@ -576,37 +576,53 @@ body { margin: 0; background-color: var(--dark-bg); color: #f1f1f1; overflow-x: 
 }
 
 @media (max-width: 768px) {
-    .menu-toggle { display: flex; }
+    .menu-toggle { 
+        display: flex; 
+        padding: 10px;
+    }
 
+    /* Ajuste del contenedor de links para que sea un menú lateral/total */
     .nav-links {
         position: fixed;
         top: 0;
         right: -100%; /* Escondido a la derecha */
-        width: 80%;
+        width: 100%;  /* Ocupa todo el ancho */
         height: 100vh;
-        background: rgba(15, 23, 42, 0.95);
+        background: rgba(15, 23, 42, 0.98); /* Fondo oscuro premium */
         backdrop-filter: blur(15px);
-        flex-direction: column;
+        display: flex;
+        flex-direction: column; /* Botones uno debajo de otro */
         justify-content: center;
         align-items: center;
-        transition: 0.4s ease;
-        gap: 25px;
+        transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        gap: 20px;
         z-index: 10001;
-        border-left: 1px solid var(--glass-border);
     }
 
     .nav-links.active {
-        right: 0; /* Se desliza hacia adentro */
+        right: 0; /* Entra a la pantalla */
     }
 
     .nav-links button {
-        width: 80%;
-        font-size: 1.2rem;
+        width: 80%; /* Botones anchos para el pulgar */
         padding: 15px;
+        font-size: 1.2rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        color: white;
     }
 
-    /* Animación de las barras (X al abrir) */
-    .menu-toggle.is-active .bar:nth-child(2) { opacity: 0; }
-    .menu-toggle.is-active .bar:nth-child(1) { transform: translateY(9px) rotate(45deg); }
-    .menu-toggle.is-active .bar:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+    /* Estilo especial para el botón de Gestión en móvil */
+    .nav-links button:last-child {
+        border-color: var(--accent);
+        color: var(--accent);
+        margin-top: 20px;
+    }
+
+    /* Ajuste del Logo para que no se mueva al abrir el menú */
+    .nav-logo {
+        font-size: 1.2rem;
+        z-index: 10002;
+    }
 }
