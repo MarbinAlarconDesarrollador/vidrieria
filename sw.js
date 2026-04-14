@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vidriosapp-v2';
+const CACHE_NAME = 'vidriosapp-v3';
 const urlsToCache = [
   '/',
   'index.html',
