@@ -16,11 +16,12 @@ const catalog = {
 };
 
 let activeProduct = null;
+let currentRotation = 0;
 const overlay = document.getElementById('product-overlay');
 
 // --- 2. NAVEGACIÓN ---
 function executeShowSection(sectionId) {
-    const sections = ['simulador', 'galeria', 'contacto', 'admin'];
+    const sections = ['simulador', 'galeria', 'videos', 'contacto', 'admin'];
     // Secciones adicionales que queremos ocultar en el modo Admin
     const servicios = document.getElementById('servicios');
     const proceso = document.getElementById('proceso');
@@ -36,9 +37,13 @@ function executeShowSection(sectionId) {
 
     // Lógica por sección
     if (sectionId === 'galeria') {
+        if (servicios) servicios.style.display = 'none';
+        if (proceso) proceso.style.display = 'none';
         cargarGaleria();
     }
     else if (sectionId === 'simulador') {
+        if (servicios) servicios.style.display = 'none';
+        if (proceso) proceso.style.display = 'none';
         filterProducts('espejo-luz');
         // El delay de 300ms es CLAVE para que el navegador vea el elemento visible antes de pedir cámara
         setTimeout(() => {
@@ -51,8 +56,11 @@ function executeShowSection(sectionId) {
         //console.log("Sección Admin - Aquí va la lógica administrativa");
         updateAdminUI(); // <-- Nueva llamada para pintar los datos
         stopCamera();
-    }
-    else {
+    } else if (sectionId === 'videos') {
+        if (servicios) servicios.style.display = 'none';
+        if (proceso) proceso.style.display = 'none';
+        togglePlay(document.querySelector('.video-card')); // Pausar cualquier video activoSSSS
+    } else {
         stopCamera();
     }
 
@@ -63,18 +71,40 @@ function executeShowSection(sectionId) {
 
 // --- 3. LÓGICA DEL SIMULADOR ---
 function filterProducts(category) {
+    // 1. GESTIÓN VISUAL: Iluminar el botón seleccionado
+    const buttons = document.querySelectorAll('.category-menu button');
+    buttons.forEach(btn => {
+        // Buscamos el botón que tiene la categoría que acabamos de tocar
+        if (btn.getAttribute('onclick').includes(`'${category}'`)) {
+            btn.classList.add('active-cat');
+        } else {
+            btn.classList.remove('active-cat');
+        }
+    });
+
+    // 2. RENDERIZADO: Tu lógica original corregida
     const container = document.getElementById('product-list');
     container.innerHTML = '';
+
+    // Verificamos que la categoría exista en el catálogo para evitar errores
+    if (!catalog[category]) return;
+
     catalog[category].forEach(prod => {
         const item = document.createElement('div');
-        item.className = 'product-item';
+        // Usamos 'product-item' como tienes en tu base
+        item.className = 'product-item'; 
+        
         item.innerHTML = `
-            <img src="img/catalog/${prod.views[0]}" onclick="changeProduct('${category}', ${prod.id})">
+            <img src="img/catalog/${prod.views[0]}" 
+                 onclick="changeProduct('${category}', ${prod.id})" 
+                 alt="${prod.name}"
+                 style="cursor:pointer;">
             <span>${prod.name}</span>
         `;
         container.appendChild(item);
     });
 }
+
 
 
 function changeProduct(category, productId) {
@@ -109,18 +139,41 @@ function rotateProductView() {
         overlay.style.opacity = 1;
     }, 150);
 }
-// --- 4. CÁMARA ---
-/*async function startCamera() {
-    const video = document.getElementById('camera-feed');
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-        video.srcObject = stream;
-    } catch (err) {
-        console.error("Cámara no disponible");
+
+function rotateProduct(degrees) {
+    const overlay = document.getElementById('product-overlay');
+    if (!overlay || !overlay.src || overlay.style.opacity === "0") return;
+
+    currentRotation += degrees;
+    
+    // 1. Obtenemos todo el transform que la imagen tenga en este momento (su posición actual)
+    let currentTransform = overlay.style.transform || '';
+    
+    // 2. Limpiamos CUALQUIER rotación anterior con una pequeña expresión regular.
+    // Esto es magia pura: borra el giro viejo pero NO borra la posición a donde arrastraste.
+    currentTransform = currentTransform.replace(/rotate\([^)]+\)/g, '').trim();
+    
+    // 3. Le aplicamos su posición original intacta + los nuevos grados de rotación
+    overlay.style.transform = `${currentTransform} rotate(${currentRotation}deg)`;
+    
+    document.getElementById('rotation-display').innerText = `${currentRotation}°`;
+}
+
+
+
+function resetProduct() {
+    currentRotation = 0;
+    const overlay = document.getElementById('product-overlay');
+    if (overlay) {
+        // Volvemos a centrar todo y quitamos rotaciones
+        overlay.style.top = '50%';
+        overlay.style.left = '50%';
+        overlay.style.transform = `translate(-50%, -50%)`;
+        document.getElementById('rotation-display').innerText = `0°`;
     }
-}*/
+}
 
-
+// --- 4. CÁMARA ---
 async function startCamera() {
     const video = document.getElementById('camera-feed');
     if (!video) return;
@@ -183,8 +236,14 @@ overlay.addEventListener('touchmove', (e) => {
         currentScale = Math.max(0.3, Math.min(currentScale, 3));
         initialDistance = dist;
     }
-    overlay.style.transform = `translate(-50%, -50%) translate3d(${currentX}px, ${currentY}px, 0) scale(${currentScale})`;
+    //overlay.style.transform = `translate(-50%, -50%) translate3d(${currentX}px, ${currentY}px, 0) scale(${currentScale})`;
+    // ... (dentro de touchmove, al final)
+overlay.style.transform = `translate(-50%, -50%) translate3d(${currentX}px, ${currentY}px, 0) scale(${currentScale}) rotate(${currentRotation}deg)`;
+
 });
+
+
+
 
 // --- 6. GALERÍA ---
 const trabajos = [
@@ -206,6 +265,54 @@ function cargarGaleria() {
         };
         contenedor.appendChild(item);
     });
+}
+
+function togglePlay(wrapper) {
+    const video = wrapper.querySelector('video');
+    const card = wrapper.parentElement;
+
+    if (video.paused) {
+        // Pausar todos los demás videos antes de reproducir este
+        document.querySelectorAll('video').forEach(v => v.pause());
+        video.play();
+        card.classList.remove('paused');
+    } else {
+        video.pause();
+        card.classList.add('paused');
+    }
+}
+
+
+function toggleMute(event, btn) {
+    // Evita que el clic active también el togglePlay del contenedor
+    event.stopPropagation();
+
+    const video = btn.parentElement.querySelector('video');
+    const icon = btn.querySelector('.mute-icon');
+
+    if (video.muted) {
+        video.muted = false;
+        icon.innerText = '🔊';
+        btn.style.background = 'var(--accent)'; // Color activo
+    } else {
+        video.muted = true;
+        icon.innerText = '🔇';
+        btn.style.background = 'rgba(0, 0, 0, 0.5)'; // Color apagado
+    }
+}
+
+// Modificamos ligeramente la función de Play para asegurar que el mute se respete
+function togglePlay(wrapper) {
+    const video = wrapper.querySelector('video');
+    const card = wrapper.closest('.video-card-reels');
+
+    if (video.paused) {
+        video.play();
+        card.classList.remove('paused');
+    } else {
+        video.pause();
+        card.classList.add('paused');
+    }
 }
 
 // --- 7. LÓGICA ADMINISTRATIVA (LOCALSTORAGE) ---
@@ -273,7 +380,7 @@ function updateAdminUI() {
     // 1. FILTRAR los datos según el botón seleccionado
     const filteredTransactions = transactions.filter(t => {
         const tDate = new Date(t.id); // Convertimos el ID (timestamp) a Fecha
-        
+
         if (currentFilter === 'daily') {
             return t.id >= todayStart; // Desde las 00:00 de hoy
         } else if (currentFilter === 'weekly') {
@@ -315,13 +422,13 @@ function updateAdminUI() {
 
 function applyFilter(filterType, btnElement) {
     currentFilter = filterType;
-    
+
     // Actualizar visualmente el botón activo
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     if (btnElement) {
         btnElement.classList.add('active');
     }
-    
+
     // Refrescar la tabla y los números
     updateAdminUI();
 }
@@ -374,13 +481,13 @@ function showSection(sectionId) {
 function logoutAdmin() {
     // 1. Resetear el estado de autenticación
     isAdminAuthenticated = false;
-    
+
     // 2. Limpiar el campo de contraseña del modal por seguridad
     document.getElementById('admin-pass').value = "";
-    
+
     // 3. Redirigir a la sección principal (Simulador)
     showSection('simulador');
-    
+
     // 4. Opcional: Feedback visual
     console.log("Sesión administrativa cerrada");
 }
@@ -399,7 +506,7 @@ function exportToCSV() {
     // Recorrer transacciones y dar formato
     transactions.forEach(t => {
         // Limpiamos la descripción de comas para no romper el CSV
-        const cleanDesc = t.desc.replace(/,/g, "."); 
+        const cleanDesc = t.desc.replace(/,/g, ".");
         const row = `${t.date},${cleanDesc},${t.type.toUpperCase()},${t.amount}`;
         csvContent += row + "\n";
     });
@@ -408,11 +515,11 @@ function exportToCSV() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    
+
     // Nombre del archivo con fecha actual
     const fechaDescarga = new Date().toLocaleDateString().replace(/\//g, "-");
     link.setAttribute("download", `Reporte_VidriosApp_${fechaDescarga}.csv`);
-    
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -421,18 +528,18 @@ function exportToCSV() {
 function toggleMenu() {
     const menu = document.getElementById('nav-menu');
     const toggle = document.getElementById('mobile-menu');
-    
+
     // Alternamos la clase 'active'
     menu.classList.toggle('active');
-    
+
     // Animación opcional de la X en la hamburguesa
     toggle.classList.toggle('is-active');
 }
 
 function navAction(section) {
     // 1. Ejecutamos el cambio de sección
-    showSection(section); 
-    
+    showSection(section);
+
     // 2. Cerramos el menú si estamos en móvil
     const menu = document.getElementById('nav-menu');
     if (menu.classList.contains('active')) {

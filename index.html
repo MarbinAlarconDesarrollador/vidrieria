@@ -34,231 +34,284 @@
         </div>
 
         <div class="nav-links" id="nav-menu">
+            <button onclick="navAction('hero')">Inicio</button>
             <button onclick="navAction('simulador')">Simulador</button>
             <button onclick="navAction('galeria')">Galería</button>
+            <button onclick="navAction('videos')">Videos</button>
             <button onclick="navAction('contacto')">Ubicación</button>
             <button onclick="navAction('admin')">Gestión</button>
         </div>
-        </nav>
+    </nav>
 
-        <main>
-            <section id="simulador" class="pro-section" style="display: none;">
-                <div class="section-title">
-                    <span>01</span>
-                    <h2>Diseña tu espacio</h2>
-                </div>
+    <main>
+        <section id="simulador" class="pro-section" style="display: none;">
+            <div class="section-title">
+                <span>SIMULADOR</span>
+                <h2>Diseña tu espacio</h2>
+            </div>
 
-                <div class="category-menu">
-                    <button onclick="filterProducts('espejo-luz')">Espejos con Luz</button>
-                    <button onclick="filterProducts('espejo-simple')">Espejos Simples</button>
-                    <button onclick="filterProducts('ventanas')">Ventanas</button>
-                    <button onclick="filterProducts('divisiones')">Divisiones</button>
-                </div>
+            <div class="category-menu">
+                <button onclick="filterProducts('espejo-luz')">Espejos con Luz</button>
+                <button onclick="filterProducts('espejo-simple')">Espejos Simples</button>
+                <button onclick="filterProducts('ventanas')">Ventanas</button>
+                <button onclick="filterProducts('divisiones')">Divisiones</button>
+            </div>
 
-                <div id="product-list" class="product-carousel"></div>
+            <div id="product-list" class="product-carousel"></div>
 
-                <div class="ar-container">
-                    <video id="camera-feed" autoplay playsinline muted></video>
-                    <img id="product-overlay" src="" alt="Producto" style="opacity: 0;">
+            <div class="ar-container">
+                <video id="camera-feed" autoplay playsinline muted></video>
+                <img id="product-overlay" src="" alt="Producto"
+                    style="opacity: 0; transform: translate(-50%, -50%) rotate(0deg);">
 
-                    <button id="btn-3d" onclick="rotateProductView()"
-                        style="display:none; position: absolute; z-index: 9999;">
-                        <div class="icon-3d">🔄</div> Girar Vista
-                    </button>
+                <div class="ar-controls">
+                    <button onclick="rotateProduct(-15)">↺</button>
+                    <span id="rotation-display">0°</span>
+                    <button onclick="rotateProduct(15)">↻</button>
+                    <button onclick="resetProduct()" title="Resetear">🏠</button>
+                    <button id="btn-3d"  onclick="rotateProductView()" style="align-items: center;" title="Siguiente Vistas"> 🔄 </button>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <section id="galeria" class="pro-section" style="display: none;">
-                <div class="section-title">
-                    <span>02</span>
-                    <h2>Proyectos Exclusivos</h2>
-                </div>
-                <div class="accordion-container" id="accordion-galeria"></div>
-            </section>
-            <section id="servicios" class="pro-section">
-                <div class="section-title">
-                    <span>03</span>
-                    <h2>Nuestras Especialidades</h2>
-                </div>
-                <div class="services-grid">
-                    <div class="service-card">
-                        <div class="service-icon">💎</div>
-                        <h3>Vidrio Templado</h3>
-                        <p>Seguridad y elegancia para fachadas, puertas y divisiones de alto impacto.</p>
-                    </div>
-                    <div class="service-card">
-                        <div class="service-icon">💡</div>
-                        <h3>Espejos Inteligentes</h3>
-                        <p>Espejos con retroiluminación LED, sensores táctiles y sistemas desempañantes.</p>
-                    </div>
-                    <div class="service-card">
-                        <div class="service-icon">🏗️</div>
-                        <h3>Divisiones de Baño</h3>
-                        <p>Diseños a medida en acero inoxidable y herrajes de lujo para tu hogar.</p>
-                    </div>
-                </div>
-            </section>
+        <section id="galeria" class="pro-section" style="display: none;">
+            <div class="section-title">
+                <span>GALERÍA</span>
+                <h2>Proyectos Exclusivos</h2>
+            </div>
+            <div class="accordion-container" id="accordion-galeria"></div>
+        </section>
 
-            <section id="proceso" class="pro-section" style="background: rgba(255,255,255,0.02)">
-                <div class="section-title">
-                    <span>04</span>
-                    <h2>Tu Proyecto en 3 Pasos</h2>
-                </div>
-                <div class="process-steps">
-                    <div class="step">
-                        <div class="step-num">1</div>
-                        <h4>Medición</h4>
-                        <p>Visitamos tu espacio para tomar medidas milimétricas sin costo extra.</p>
-                    </div>
-                    <div class="step">
-                        <div class="step-num">2</div>
-                        <h4>Simulación</h4>
-                        <p>Usas nuestra App para visualizar el diseño final en tu propia pared.</p>
-                    </div>
-                    <div class="step">
-                        <div class="step-num">3</div>
-                        <h4>Instalación</h4>
-                        <p>En menos de 5 días hábiles, nuestro equipo experto realiza el montaje.</p>
-                    </div>
-                </div>
-            </section>
-            <section id="contacto" class="pro-section" style="display: none;">
-                <div class="section-title">
-                    <span>05</span>
-                    <h2>Visítanos</h2>
-                </div>
+        <section id="videos" class="pro-section" style="display: none;">
+            <div class="section-title">
+                <span>PROCESOS</span>
+                <h2>Nuestros Procesos</h2>
+            </div>
 
-                <div class="contact-grid">
-                    <div class="contact-info">
-                        <div class="info-card">
-                            <h3>Sede Piedecuesta</h3>
-                            <p>Carrera 6 # 16-58</p>
-                            <p>Santander, Colombia</p>
-                            <p><strong>Lunes a Sábado:</strong> 8am - 6pm</p>
+            <div class="video-feed">
+
+                <div class="video-card-reels" id="vid-1">
+                    <div class="video-wrapper" onclick="togglePlay(this)">
+                        <video loop playsinline>
+                            <source src="./videos/video1.mp4" type="video/mp4">
+                        </video>
+                        <div class="mute-control" onclick="toggleMute(event, this)">
+                            <span class="mute-icon">🔇</span>
                         </div>
-                        <a href="https://wa.me/573205578471?text=Hola!%20Quiero%20una%20cotización"
-                            class="btn-whatsapp-pro" target="_blank">
-                            <span class="icon">💬</span> Chatear por WhatsApp
-                        </a>
+                        <div class="play-overlay"><span>▶</span></div>
+                        <div class="video-meta">
+                            <h4>Diseño Aura Premium 1</h4>
+                            <p>@vidrieria_keiner_figueroa</p>
+                        </div>
                     </div>
-                    <div class="map-wrapper">
-                        <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.9!2d-73.0!3d7.0!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zN8KwMDAnMDAuMCJOIDczwrAwMCcwMC4wIlc!5e0!3m2!1ses!2sco!4v1650000000000!5m2!1ses!2sco"
-                            width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                    </div>
-                </div>
-            </section>
-            <section id="admin" class="pro-section" style="display: none;">
-                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
-                    <div style="display: flex; align-items: center;">
-                        <span>06</span>
-                        <h2>Panel Administrativo</h2>
-                    </div>
-                    <button onclick="exportToCSV()" class="btn-logout"
-                        style="background: rgba(37, 211, 102, 0.1); color: #25d366; border-color: rgba(37, 211, 102, 0.3);">
-                        📥 Exportar Excel
-                    </button>
-                    <button onclick="logoutAdmin()" class="btn-logout">Cerrar Sesión</button>
                 </div>
 
-                <p style="color: #94a3b8; margin-bottom: 20px;">Control local de ventas y gastos.</p>
-
-                <div class="admin-filters">
-                    <button class="filter-btn active" onclick="applyFilter('all', this)">Histórico</button>
-                    <button class="filter-btn" onclick="applyFilter('daily', this)">Hoy</button>
-                    <button class="filter-btn" onclick="applyFilter('weekly', this)">Últimos 7 días</button>
-                    <button class="filter-btn" onclick="applyFilter('monthly', this)">Este Mes</button>
+                <div class="video-card-reels" id="vid-2">
+                    <div class="video-wrapper" onclick="togglePlay(this)">
+                        <video loop playsinline>
+                            <source src="./videos/video2.mp4" type="video/mp4">
+                        </video>
+                        <div class="mute-control" onclick="toggleMute(event, this)">
+                            <span class="mute-icon">🔇</span>
+                        </div>
+                        <div class="play-overlay"><span>▶</span></div>
+                        <div class="video-meta">
+                            <h4>Diseño Aura Premium 2</h4>
+                            <p>@vidrieria_keiner_figueroa</p>
+                        </div>
+                    </div>
                 </div>
+
+            </div>
+        </section>
+        <section id="servicios" class="pro-section">
+            <div class="section-title">
+                <span>ESPECIALIDADES</span>
+                <h2>Nuestras Especialidades</h2>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">💎</div>
+                    <h3>Vidrio Templado</h3>
+                    <p>Seguridad y elegancia para fachadas, puertas y divisiones de alto impacto.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">💡</div>
+                    <h3>Espejos Inteligentes</h3>
+                    <p>Espejos con retroiluminación LED, sensores táctiles y sistemas desempañantes.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🏗️</div>
+                    <h3>Divisiones de Baño</h3>
+                    <p>Diseños a medida en acero inoxidable y herrajes de lujo para tu hogar.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="proceso" class="pro-section" style="background: rgba(255,255,255,0.02)">
+            <div class="section-title">
+                <span>3 PASOS</span>
+                <h2>Tu Proyecto en 3 Pasos</h2>
+            </div>
+            <div class="process-steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <h4>Medición</h4>
+                    <p>Visitamos tu espacio para tomar medidas milimétricas sin costo extra.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <h4>Simulación</h4>
+                    <p>Usas nuestra App para visualizar el diseño final en tu propia pared.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <h4>Instalación</h4>
+                    <p>En menos de 5 días hábiles, nuestro equipo experto realiza el montaje.</p>
+                </div>
+            </div>
+        </section>
+        <section id="contacto" class="pro-section">
+            <div class="section-title">
+                <span>VISÍTANOS</span>
+                <h2>Visítanos</h2>
+            </div>
+
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="info-card">
+                        <h3>Sede Piedecuesta</h3>
+                        <p>Carrera 6 # 16-58</p>
+                        <p>Santander, Colombia</p>
+                        <p><strong>Lunes a Sábado:</strong> 8am - 6pm</p>
+                    </div>
+                    <a href="https://wa.me/573205578471?text=Hola!%20Quiero%20una%20cotización" class="btn-whatsapp-pro"
+                        target="_blank">
+                        <span class="icon">💬</span> Chatear por WhatsApp
+                    </a>
+                </div>
+                <div class="map-wrapper">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.9!2d-73.0!3d7.0!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zN8KwMDAnMDAuMCJOIDczwrAwMCcwMC4wIlc!5e0!3m2!1ses!2sco!4v1650000000000!5m2!1ses!2sco"
+                        width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+        </section>
+        <section id="admin" class="pro-section" style="display: none;">
+            <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center;">
+                    <span>PANEL DE CONTROL</span>
+                    <h2>Panel Administrativo</h2>
+                </div>
+                <button onclick="exportToCSV()" class="btn-logout"
+                    style="background: rgba(37, 211, 102, 0.1); color: #25d366; border-color: rgba(37, 211, 102, 0.3);">
+                    📥 Exportar Excel
+                </button>
+                <button onclick="logoutAdmin()" class="btn-logout">Cerrar Sesión</button>
+            </div>
+
+            <p style="color: #94a3b8; margin-bottom: 20px;">Control local de ventas y gastos.</p>
+
+            <div class="admin-filters">
+                <button class="filter-btn active" onclick="applyFilter('all', this)">Histórico</button>
+                <button class="filter-btn" onclick="applyFilter('daily', this)">Hoy</button>
+                <button class="filter-btn" onclick="applyFilter('weekly', this)">Últimos 7 días</button>
+                <button class="filter-btn" onclick="applyFilter('monthly', this)">Este Mes</button>
+            </div>
+            <div class="admin-dashboard">
                 <div class="admin-dashboard">
-                    <div class="admin-dashboard">
-                        <div class="card income">
-                            <h4>Ingresos</h4>
-                            <p>$<span id="total-income">0</span></p>
-                        </div>
-                        <div class="card expense">
-                            <h4>Gastos</h4>
-                            <p>$<span id="total-expense">0</span></p>
-                        </div>
-                        <div class="card balance">
-                            <h4>Balance Neto</h4>
-                            <p>$<span id="total-balance">0</span></p>
-                        </div>
+                    <div class="card income">
+                        <h4>Ingresos</h4>
+                        <p>$<span id="total-income">0</span></p>
                     </div>
-
-                    <form id="admin-form" onsubmit="addTransaction(event)">
-                        <input type="text" id="t-desc" placeholder="Ej. Anticipo Espejo Aura" required>
-                        <input type="number" id="t-amount" placeholder="Monto ($)" required>
-                        <select id="t-type">
-                            <option value="ingreso">Venta / Ingreso</option>
-                            <option value="gasto">Costo / Gasto</option>
-                        </select>
-                        <button type="submit" class="btn-primary"
-                            style="padding: 12px 25px; border-radius: 8px;">Agregar</button>
-                    </form>
-
-                    <div class="table-responsive">
-                        <table id="admin-table">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Descripción</th>
-                                    <th>Tipo</th>
-                                    <th>Monto</th>
-                                    <th>Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody id="t-body">
-                            </tbody>
-                        </table>
+                    <div class="card expense">
+                        <h4>Gastos</h4>
+                        <p>$<span id="total-expense">0</span></p>
                     </div>
-            </section>
-        </main>
-        <footer class="main-footer">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <div class="nav-logo">Vidrieria<span>Keiner Figueroa</span></div>
-                    <p>Innovación en vidrio y espejos para Piedecuesta y todo Santander.</p>
-                </div>
-
-                <div class="footer-links">
-                    <h4>Navegación</h4>
-                    <ul>
-                        <li><a href="javascript:void(0)" onclick="showSection('hero')">Inicio</a></li>
-                        <li><a href="javascript:void(0)" onclick="showSection('simulador')">Simulador AR</a></li>
-                        <li><a href="javascript:void(0)" onclick="showSection('galeria')">Galería</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-social">
-                    <h4>Síguenos</h4>
-                    <div class="social-icons">
-                        <a href="#">📸 Instagram</a>
-                        <a href="#">👤 Facebook</a>
+                    <div class="card balance">
+                        <h4>Balance Neto</h4>
+                        <p>$<span id="total-balance">0</span></p>
                     </div>
                 </div>
+
+                <form id="admin-form" onsubmit="addTransaction(event)">
+                    <input type="text" id="t-desc" placeholder="Ej. Anticipo Espejo Aura" required>
+                    <input type="number" id="t-amount" placeholder="Monto ($)" required>
+                    <select id="t-type">
+                        <option value="ingreso">Venta / Ingreso</option>
+                        <option value="gasto">Costo / Gasto</option>
+                    </select>
+                    <button type="submit" class="btn-primary"
+                        style="padding: 12px 25px; border-radius: 8px;">Agregar</button>
+                </form>
+
+                <div class="table-responsive">
+                    <table id="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Descripción</th>
+                                <th>Tipo</th>
+                                <th>Monto</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="t-body">
+                        </tbody>
+                    </table>
+                </div>
+        </section>
+    </main>
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="nav-logo">Vidrieria<span>Keiner Figueroa</span></div>
+                <p>Innovación en vidrio y espejos para Piedecuesta y todo Santander.</p>
             </div>
 
-            <div class="footer-bottom">
-                <p>&copy; 2026 Vidriería Keyner Figueroa. Todos los derechos reservados.</p>
-                <p class="dev-credit">Desarrollado con ❤️ por <span>Marbin Alarcón</span></p>
-            </div>
-        </footer>
+            <div class="footer-links">
+                <h4>Navegación</h4>
+                <ul>
+                    <li><a href="javascript:void(0)" onclick="showSection('hero')">Inicio</a></li>
+                    <li><a href="javascript:void(0)" onclick="showSection('simulador')">Simulador AR</a></li>
+                    <li><a href="javascript:void(0)" onclick="showSection('galeria')">Galería</a></li>
+                    <li><a href="javascript:void(0)" onclick="showSection('videos')">Videos</a></li>
+                    <li><a href="javascript:void(0)" onclick="showSection('contacto')">Ubicación</a></li>
+                    <li><a href="javascript:void(0)" onclick="showSection('admin')">Gestión</a></li>
+                </ul>
 
-        <div id="admin-login" class="glass-nav"
-            style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:10001; flex-direction:column; justify-content:center; align-items:center; background: rgba(15, 23, 42, 0.98);">
-            <div class="service-card" style="max-width: 400px; width: 90%;">
-                <h3>Acceso Restringido</h3>
-                <p style="margin-bottom:20px; color:#94a3b8;">Ingrese su clave maestra</p>
-                <input type="password" id="admin-pass" placeholder="Contraseña"
-                    style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,0.3); color:white; text-align:center;">
-                <div style="display:flex; gap:10px;">
-                    <button onclick="cancelLogin()" class="btn-secondary" style="flex:1;">Cancelar</button>
-                    <button onclick="checkAdminPassword()" class="btn-primary" style="flex:1;">Entrar</button>
+            </div>
+
+            <div class="footer-social">
+                <h4>Síguenos</h4>
+                <div class="social-icons">
+                    <a href="#">📸 Instagram</a>
+                    <a href="#">👤 Facebook</a>
                 </div>
             </div>
         </div>
 
-        <script src="app.js"></script>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Vidriería Keyner Figueroa. Todos los derechos reservados.</p>
+            <p class="dev-credit">Desarrollado con ❤️ por <span>Marbin Alarcón</span></p>
+        </div>
+    </footer>
+
+    <div id="admin-login" class="glass-nav"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:10001; flex-direction:column; justify-content:center; align-items:center; background: rgba(15, 23, 42, 0.98);">
+        <div class="service-card" style="max-width: 400px; width: 90%;">
+            <h3>Acceso Restringido</h3>
+            <p style="margin-bottom:20px; color:#94a3b8;">Ingrese su clave maestra</p>
+            <input type="password" id="admin-pass" placeholder="Contraseña"
+                style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,0.3); color:white; text-align:center;">
+            <div style="display:flex; gap:10px;">
+                <button onclick="cancelLogin()" class="btn-secondary" style="flex:1;">Cancelar</button>
+                <button onclick="checkAdminPassword()" class="btn-primary" style="flex:1;">Entrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
 </body>
 
 </html>
